@@ -8,7 +8,7 @@ public class MainApp {
 
     public static void main(String[] args) {
 
-        // 🔹 HashSet duplicate test
+        //  HashSet duplicate test
         Set<Student> studentSet = new HashSet<>();
         Student s1 = new Student(101, "Alice", "alice@test.com");
         Student s1Duplicate = new Student(101, "Alice", "alice@test.com");
@@ -18,7 +18,7 @@ public class MainApp {
 
         System.out.println("Set Size (Should be 1): " + studentSet.size());
 
-        // 🔹 Service usage
+        //  Service usage
         StudentService service = new StudentService();
 
         try {
