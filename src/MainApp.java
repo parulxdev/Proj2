@@ -26,7 +26,6 @@ public class MainApp {
             service.addStudent(new Student(102, "Bob", "bob@test.com"));
             service.addStudent(new Student(103, "Alex", "alex@test.com"));
 
-            // ❌ duplicate
             service.addStudent(new Student(101, "Duplicate", "dup@test.com"));
 
         } catch (DuplicateStudentException e) {
@@ -34,7 +33,6 @@ public class MainApp {
         }
 
         try {
-            // ❌ invalid email
             service.addStudent(new Student(104, "Invalid", "wrong-email"));
         } catch (InvalidEmailException e) {
             System.out.println(e.getMessage());
@@ -42,14 +40,14 @@ public class MainApp {
 
         try {
             System.out.println("\nSearch ID 102: " + service.findById(102));
-            System.out.println("Search ID 999: " + service.findById(999)); // ❌
+            System.out.println("Search ID 999: " + service.findById(999)); // No
         } catch (StudentNotFoundException e) {
             System.out.println(e.getMessage());
         }
 
         try {
             service.updateStudent(102, "newbob@test.com");
-            service.updateStudent(999, "fail@test.com"); // ❌
+            service.updateStudent(999, "fail@test.com"); // No
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
