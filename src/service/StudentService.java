@@ -4,11 +4,23 @@ import model.Student;
 import exception.*;
 
 import java.util.*;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
+
 
 public class StudentService {
 
-    private Map<Integer, Student> studentMap = new HashMap<>();
-
+    private final ConcurrentHashMap<Integer, Student> studentMap = new ConcurrentHashMap<>();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private int totalOperations = 0;
+    private synchronized void incrementOperationCount() {
+        totalOperations++;
+    }
+    public synchronized int getTotalOperations() {
+        return totalOperations;
+    }
     public void addStudent(Student student) {
 
         if (studentMap.containsKey(student.getId())) {
@@ -22,8 +34,16 @@ public class StudentService {
                 "Invalid email: " + student.getEmail()
             );
         }
+        lock.writeLock().lock();
 
-        studentMap.put(student.getId(), student);
+        try{
+            studentMap.put(student.getId(), student);
+            incrementOperationCount();
+            System.out.println(Thread.currentThread().getName() + " - Added student " + student.getId());
+        } 
+        finally {
+            lock.writeLock().unlock();
+        }
     }
 
     public Student findById(int id) {
@@ -32,43 +52,86 @@ public class StudentService {
                 "Student not found with id: " + id
             );
         }
+        incrementOperationCount();
         return studentMap.get(id);
     }
 
     public void deleteStudent(int id) {
-        if (!studentMap.containsKey(id)) {
-            throw new StudentNotFoundException(
-                "Cannot delete. Student not found with id: " + id
-            );
+        lock.writeLock().lock();
+        try{
+            if (!studentMap.containsKey(id)) {
+                throw new StudentNotFoundException(
+                    "Cannot delete. Student not found with id: " + id
+                );
+            }
+            incrementOperationCount();
+            studentMap.remove(id);
         }
-        studentMap.remove(id);
+        finally {
+            lock.writeLock().unlock();
+        }
+        
+    }
+    public int getSize() {
+        return studentMap.size();
     }
 
     public void updateStudent(int id, String newEmail) {
-        if (!studentMap.containsKey(id)) {
-            throw new StudentNotFoundException(
-                "Cannot update. Student not found with id: " + id
-            );
-        }
-
+        
         if (!newEmail.contains("@")) {
             throw new InvalidEmailException("Invalid email: " + newEmail);
         }
-
-        studentMap.get(id).setEmail(newEmail);
+        lock.writeLock().lock();
+        try{
+            if (!studentMap.containsKey(id)) {
+            throw new StudentNotFoundException(
+                "Cannot update. Student not found with id: " + id);
+            }
+        
+            incrementOperationCount();
+            studentMap.get(id).setEmail(newEmail);
+        }
+        finally {
+            lock.writeLock().unlock();
+        }
     }
 
     public List<Student> getAllSortedByName() {
-        return studentMap.values()
-                .stream()
-                .sorted(Comparator.comparing(Student::getName))
-                .toList();
+        lock.readLock().lock();
+        try {
+            return studentMap.values().stream()
+                    .sorted(Comparator.comparing(Student::getName))
+                    .collect(Collectors.toList());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     public List<Student> filterByNamePrefix(String prefix) {
-        return studentMap.values()
-                .stream()
-                .filter(s -> s.getName().startsWith(prefix))
-                .toList();
+        lock.readLock().lock();
+        try {
+            return studentMap.values().stream()
+                    .filter(s -> s.getName().startsWith(prefix))
+                    .collect(Collectors.toList());
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+    public void clear() {
+        lock.writeLock().lock();
+        try {
+            studentMap.clear();
+            System.out.println("Cleared all students");
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+    public List<Student> getAllStudents() {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<>(studentMap.values());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 }

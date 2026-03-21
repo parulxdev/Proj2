@@ -1,4 +1,10 @@
 import model.Student;
+import multithreading.Level1_BasicThreads;
+import multithreading.Level2_RequestSimulation;
+import multithreading.Level3_RaceCondition;
+import multithreading.Level4_SynchronizedFix;
+import multithreading.Level5_ExecutorServiceDemo;
+import multithreading.Level6_ThreadSafeStudentSystem;
 import service.StudentService;
 import exception.*;
 
@@ -7,6 +13,9 @@ import java.util.*;
 public class MainApp {
 
     public static void main(String[] args) {
+        
+        
+        
 
         //  HashSet duplicate test
         Set<Student> studentSet = new HashSet<>();
@@ -26,7 +35,7 @@ public class MainApp {
             service.addStudent(new Student(102, "Bob", "bob@test.com"));
             service.addStudent(new Student(103, "Alex", "alex@test.com"));
 
-            // ❌ duplicate
+            //  duplicate
             service.addStudent(new Student(101, "Duplicate", "dup@test.com"));
 
         } catch (DuplicateStudentException e) {
@@ -34,7 +43,7 @@ public class MainApp {
         }
 
         try {
-            // ❌ invalid email
+            //  invalid email
             service.addStudent(new Student(104, "Invalid", "wrong-email"));
         } catch (InvalidEmailException e) {
             System.out.println(e.getMessage());
@@ -68,6 +77,32 @@ public class MainApp {
             System.out.println("\nCannot divide by zero");
         } finally {
             System.out.println("Execution completed");
+        }
+        // Run all multithreading levels
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("MULTITHREADING DEMONSTRATION");
+        System.out.println("=".repeat(60) + "\n");
+        
+        try {
+            // Level 1: Basic Thread Creation
+            Level1_BasicThreads.main(new String[]{});
+            
+            // Level 2: Request Simulation
+            Level2_RequestSimulation.main(new String[]{});
+            
+            // Level 3: Race Condition
+            Level3_RaceCondition.main(new String[]{});
+            
+            // Level 4: Synchronized Fix
+            Level4_SynchronizedFix.main(new String[]{});
+            
+            // Level 5: ExecutorService
+            Level5_ExecutorServiceDemo.main(new String[]{});
+            
+            // Level 6: Thread-Safe Student System
+            Level6_ThreadSafeStudentSystem.main(new String[]{});
+        } catch (InterruptedException e) {
+            System.out.println("Multithreading execution was interrupted: " + e.getMessage());
         }
     }
 }
