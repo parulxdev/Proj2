@@ -1,0 +1,116 @@
+1. What is the difference between Process and Thread?
+
+Process = independent memory
+
+Thread = shared memory within process
+
+Threads are lightweight
+
+2. Why are threads used in backend systems?
+
+Handle multiple users concurrently
+
+Improve performance
+
+Better CPU utilization
+
+3. What is a race condition?
+
+Multiple threads modify shared data
+
+Result depends on execution order
+
+Leads to inconsistent output
+
+4. What is synchronized?
+
+Ensures only one thread accesses critical section
+
+Prevents race conditions
+
+5. Why is HashMap not thread-safe?
+
+Multiple threads modify internal structure
+
+Can lead to:
+
+Data corruption
+
+Infinite loops (in older Java versions)
+
+6. Difference between HashMap and ConcurrentHashMap
+
+Feature	HashMap	ConcurrentHashMap
+Thread-safe	HashMap no; ConcurrentHashMap  yes 
+Locking	None	Segment-based / fine-grained
+Performance	Fast (single thread)	Optimized for concurrency
+7. What is a thread pool and why is it used?
+
+Reuses threads
+
+Prevents resource exhaustion
+
+Improves performance
+
+Used internally by:
+
+Apache Tomcat
+
+Spring Boot
+
+8. What happens if we create too many threads?
+
+
+Memory exhaustion
+
+CPU context switching overhead
+
+Application crash
+
+9. What is deadlock? How do you prevent it?
+
+Circular waiting for locks
+
+Prevention:
+
+Lock ordering
+
+Timeout
+
+Avoid nested locks
+
+10. Explain how a web server handles 1000 requests
+
+Request → Thread Pool → Worker Thread → Business Logic → Response
+11. How does Kafka achieve parallel processing?
+
+Topics divided into partitions
+
+Each partition consumed by one thread
+
+Parallelism via partitions
+
+Using:
+
+Apache Kafka
+
+12. Can synchronized affect performance?
+
+Yes, blocks threads
+
+Reduces concurrency
+
+Should be minimized
+
+13. What is starvation?
+
+Thread never gets CPU time
+
+Other threads dominate
+
+14. What is livelock?
+
+Threads active but not progressing
+
+Keep reacting to each other
+
